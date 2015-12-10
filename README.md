@@ -22,9 +22,11 @@ Or install it yourself as:
 
 ## Usage
 
-```require 'timetwister'
+```ruby
+require 'timetwister'
 Timetwister.parse("Jun 1898 - [July 4 1900]")
- => {:original_string=>"Jun 1898 - July 4 1900", :index_dates=>[1898, 1899, 1900], :date_start=>"1898-06-01", :date_end=>"1900-07-04", :date_start_full=>"1898-06-01", :date_end_full=>"1900-07-04", :inclusive_range=>true, :certainty=>"inferred", :test_data=>"330"} ```
+ => {:original_string=>"Jun 1898 - July 4 1900", :index_dates=>[1898, 1899, 1900], :date_start=>"1898-06-01", :date_end=>"1900-07-04", :date_start_full=>"1898-06-01", :date_end_full=>"1900-07-04", :inclusive_range=>true, :certainty=>"inferred", :test_data=>"330"}
+ ```
 
 Output explanation:
 
