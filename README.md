@@ -43,6 +43,14 @@ Output explanation:
 
 1. Fork it ( https://github.com/[my-github-username]/timetwister/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+3. Update specs to test for new features (`rspec`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
+
+## Contributors
+
+- [Alex Duryee](https://github.com/alexduryee/)
+- [Trevor Thornton](https://github.com/trevorthornton/)
+- [Matt Miller](https://github.com/thisismattmiller/)
+- [Stephen Schor](https://github.com/nodanaonlyzuul/)
