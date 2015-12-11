@@ -53,4 +53,5 @@ Output explanation:
 - [Alex Duryee](https://github.com/alexduryee/)
 - [Trevor Thornton](https://github.com/trevorthornton/)
 - [Matt Miller](https://github.com/thisismattmiller/)
+- [Kristopher Kelly](https://github.com/emu47)
 - [Stephen Schor](https://github.com/nodanaonlyzuul/)
