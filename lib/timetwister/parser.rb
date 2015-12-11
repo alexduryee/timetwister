@@ -2,12 +2,19 @@ require 'chronic'
 
 class Parser
 
-	def self.string_to_dates(str, hash, options)
+	def self.string_to_dates(str, options)
 		@string = str
-		@dates = hash
 		@options = options
 
+		@dates = { :original_string => str, :index_dates => [], :date_start => nil, :date_end => nil,
+			:date_start_full => nil, :date_end_full => nil, :inclusive_range => nil, :certainty => nil }
+
 		@regex_tokens = regex_tokens
+
+		# defensive checks against very malformed date strings
+		if str.include?('??')
+			return @dates
+		end
 
 		# perform this here, before the string gets purged of certainty indicators
 		@dates[:certainty] = return_certainty(@string)
