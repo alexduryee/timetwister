@@ -12,7 +12,7 @@ module Timetwister
 
   				# check for dates of form "Month Day(-Day), Year" before splitting on commas
   				# (removes certainty markers as to not jam the regex)
-  				if conj.gsub(/[\?\[\]]/, '').match(/[JFMASOND][A-Za-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/)
+  				if Parser.replace_ordinals(conj).gsub(/[\?\[\]]/, '').match(/[JFMASOND][A-Za-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/)
   					out << Parser.string_to_dates(conj, options)
   				else
   					conj.split(',').each do |comma|

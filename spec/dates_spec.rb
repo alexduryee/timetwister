@@ -579,4 +579,17 @@ describe Timetwister do
 		expect(date[3][:date_end_full]).to eq("1910-06-11")
 		expect(date[3][:test_data]).to eq("240")
 	end
+
+	it "parses dates with ordinal numbers" do
+		forms = ["July twenty-first 1776", "July twenty-first, 1776", "July 21st, 1776", "July 21st 1776"]
+		forms.each do |f|
+			date = Timetwister.parse(f)
+			expect(date[0][:date_start]).to eq("1776-07-21")
+			expect(date[0][:date_start_full]).to eq("1776-07-21")
+			expect(date[0][:date_end]).to eq("1776-07-21")
+			expect(date[0][:date_end_full]).to eq("1776-07-21")
+			expect(date[0][:index_dates]).to eq([1776])
+			expect(date[0][:test_data]).to eq("200")
+		end
+	end
 end

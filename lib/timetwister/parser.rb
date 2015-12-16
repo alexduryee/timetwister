@@ -3,7 +3,7 @@ require 'chronic'
 class Parser
 
 	def self.string_to_dates(str, options)
-		@string = str
+		@string = str.clone
 		@options = options
 
 		@dates = { :original_string => str, :index_dates => [], :date_start => nil, :date_end => nil,
@@ -20,6 +20,7 @@ class Parser
 		@dates[:certainty] = return_certainty(@string)
 
 		@string = clean_string(@string)
+		@string = replace_ordinals(@string)
 		self.match_replace
 
 		# if there are any future dates, return an empty hash
@@ -1088,5 +1089,56 @@ class Parser
 	    end
 
 	    return nil
+	end
+
+	def self.replace_ordinals(str)
+
+		work_str = str.clone
+
+		ordinals = {
+			# replace fulltext ordinals with numbers
+			'first' => '1',
+			'second' => '2',
+			'third' => '3',
+			'fourth' => '4',
+			'fifth' => '5',
+			'sixth' => '6',
+			'seventh' => '7',
+			'eighth' => '8',
+			'ninth' => '9',
+			'tenth' => '10',
+			'eleventh' => '11',
+			'twelfth' => '12',
+			'thirteenth' => '13',
+			'fourteenth' => '14',
+			'fifteenth' => '15',
+			'sixteenth' => '16',
+			'seventeenth' => '17',
+			'eighteenth' => '18',
+			'nineteenth' => '19',
+			'twentieth' => '20',
+			'twenty-' => '2',
+			'thirtieth' => '30',
+			'thirty-' => '3',
+
+			# replace numeric ordinals with plain numbers
+			'1st' => '1',
+			'2nd' => '2',
+			'3rd' => '3',
+			'3d' => '3',
+			'4th' => '4',
+			'5th' => '5',
+			'6th' => '6',
+			'7th' => '7',
+			'8th' => '8',
+			'9th' => '9',
+			'0th' => '0'
+		}
+
+		ordinals.each do |key, value|
+			work_str.gsub!(Regexp.new(key), value)
+		end
+
+		return work_str
 	end
 end
