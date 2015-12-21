@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/alexduryee/timetwister.svg?branch=master)](https://travis-ci.org/alexduryee/timetwister)
+
 # Timetwister
 
 A Chronic wrapper with improved date format parsing and fewer surprises.
