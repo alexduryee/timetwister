@@ -41,6 +41,10 @@ module Timetwister
     month = str.match(/[a-z]+/i)[0]
     return_str = ''
 
+    if month.eql?('and')
+      return str
+    end
+
     str.split(/\sand\s|\s\&\s/).each do |conj|
 
       if !conj.match(/[0-9]{4}/)
