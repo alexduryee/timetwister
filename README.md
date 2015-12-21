@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/alexduryee/timetwister.svg?branch=master)](https://travis-ci.org/alexduryee/timetwister)
+[![Coverage Status](https://coveralls.io/repos/alexduryee/timetwister/badge.svg?branch=master&service=github)](https://coveralls.io/github/alexduryee/timetwister?branch=master)
 
 # Timetwister
 
@@ -26,11 +27,24 @@ Or install it yourself as:
 
 Takes a date (or list of dates) as a string, and returns a list of hashes with parsed date data.
 
+### Ruby
+
+Returns a list of hashes of parsed date data.
+
 ```ruby
 require 'timetwister'
 Timetwister.parse("Jun 1898 - [July 4 1900]")
  => [{:original_string=>"Jun 1898 - July 4 1900", :index_dates=>[1898, 1899, 1900], :date_start=>"1898-06-01", :date_end=>"1900-07-04", :date_start_full=>"1898-06-01", :date_end_full=>"1900-07-04", :inclusive_range=>true, :certainty=>"inferred", :test_data=>"330"}]
  ```
+
+### Command Line
+
+Returns a JSON object of parsed date data.
+
+```bash
+$ timetwister 'december 21 2015'
+[{"original_string":"december 21 2015","index_dates":[2015],"date_start":"2015-12-21","date_end":"2015-12-21","date_start_full":"2015-12-21","date_end_full":"2015-12-21","inclusive_range":null,"certainty":null,"test_data":"200"}]
+```
 
 Output explanation:
 
@@ -40,6 +54,9 @@ Output explanation:
 - `:date_start_full` and `:date_end_full` are ISO8601 representations of the input date in YYYY-MM-DD format (using assumed values when needed)
 - `:inclusive_range` is whether or not the input value is a range
 - `:certainty` is the certainty of the provided date, based on use of flags and punctuation
+
+
+
 
 ## Contributing
 
