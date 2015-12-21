@@ -607,4 +607,44 @@ describe Timetwister do
 			expect(date[0][:test_data]).to eq("200")
 		end
 	end
+
+	it "parses dates without clean conjunctions" do
+		forms = ["july 4 and 5 1776", "4 & 5 july 1776", "1776 july 4 and 5"]
+		forms.each do |f|
+			date = Timetwister.parse(f)
+			expect(date[0][:date_start]).to eq("1776-07-04")
+			expect(date[0][:date_start_full]).to eq("1776-07-04")
+			expect(date[0][:date_end]).to eq("1776-07-04")
+			expect(date[0][:date_end_full]).to eq("1776-07-04")
+			expect(date[0][:index_dates]).to eq([1776])
+			expect(date[0][:test_data]).to eq("200")
+
+			expect(date[1][:date_start]).to eq("1776-07-05")
+			expect(date[1][:date_start_full]).to eq("1776-07-05")
+			expect(date[1][:date_end]).to eq("1776-07-05")
+			expect(date[1][:date_end_full]).to eq("1776-07-05")
+			expect(date[1][:index_dates]).to eq([1776])
+			expect(date[1][:test_data]).to eq("200")
+		end
+
+		forms = ["july and august 1776", "1776 july and august"]
+		forms.each do |f|
+			date = Timetwister.parse(f)
+			expect(date[0][:date_start]).to eq("1776-07")
+			expect(date[0][:date_start_full]).to eq("1776-07-01")
+			expect(date[0][:date_end]).to eq("1776-07")
+			expect(date[0][:date_end_full]).to eq("1776-07-31")
+			expect(date[0][:index_dates]).to eq([1776])
+			expect(date[0][:test_data]).to eq("220")
+
+			expect(date[1][:date_start]).to eq("1776-08")
+			expect(date[1][:date_start_full]).to eq("1776-08-01")
+			expect(date[1][:date_end]).to eq("1776-08")
+			expect(date[1][:date_end_full]).to eq("1776-08-31")
+			expect(date[1][:index_dates]).to eq([1776])
+			expect(date[1][:test_data]).to eq("220")
+		end
+
+	end
+
 end
