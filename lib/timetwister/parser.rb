@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'chronic'
 
 class Parser
@@ -19,8 +21,12 @@ class Parser
 		# perform this here, before the string gets purged of certainty indicators
 		@dates[:certainty] = return_certainty(@string)
 
+		# normalize the string into the parser's preferred form
 		@string = clean_string(@string)
+		@string = language_to_english(@string)
 		@string = replace_ordinals(@string)
+
+		# parse!
 		self.match_replace
 
 		# if there are any future dates, return an empty hash
@@ -1137,6 +1143,48 @@ class Parser
 
 		ordinals.each do |key, value|
 			work_str.gsub!(Regexp.new(key), value)
+		end
+
+		return work_str
+	end
+
+	def self.language_to_english(str)
+
+		work_str = str.clone
+
+		languages = {
+
+			# french
+			'janvier' => 'January',
+			'février' => 'February',
+			'mars' => 'March',
+			'avril' => 'April',
+			'mai' => 'May',
+			'juin' => 'June',
+			'juillet' => 'July',
+			'août' => 'August',
+			'septembre' => 'September',
+			'octobre' => 'October',
+			'novembre' => 'November',
+			'décembre' => 'December',
+
+			# spanish
+			'enero' => 'January',
+			'febrero' => 'February',
+			'marzo' => 'March',
+			'abril' => 'April',
+			'mayo' => 'May',
+			'junio' => 'June',
+			'julio' => 'July',
+			'agosto' => 'August',
+			'septiembre' => 'September',
+			'octubre' => 'October',
+			'noviembre' => 'November',
+			'diciembre' => 'December'
+		}
+
+		languages.each do |key, value|
+			work_str.gsub!(/#{key}/i, value)
 		end
 
 		return work_str

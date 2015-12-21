@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 require 'timetwister'
 
@@ -588,6 +590,19 @@ describe Timetwister do
 			expect(date[0][:date_start_full]).to eq("1776-07-21")
 			expect(date[0][:date_end]).to eq("1776-07-21")
 			expect(date[0][:date_end_full]).to eq("1776-07-21")
+			expect(date[0][:index_dates]).to eq([1776])
+			expect(date[0][:test_data]).to eq("200")
+		end
+	end
+
+	it "parses dates in multiple languages" do
+		forms = ["august 4 1776", "août 4 1776", "agosto 4 1776"]
+		forms.each do |f|
+			date = Timetwister.parse(f)
+			expect(date[0][:date_start]).to eq("1776-08-04")
+			expect(date[0][:date_start_full]).to eq("1776-08-04")
+			expect(date[0][:date_end]).to eq("1776-08-04")
+			expect(date[0][:date_end_full]).to eq("1776-08-04")
 			expect(date[0][:index_dates]).to eq([1776])
 			expect(date[0][:test_data]).to eq("200")
 		end
