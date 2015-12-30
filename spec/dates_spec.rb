@@ -12,11 +12,14 @@ describe Timetwister do
 	end
 
 	it "parses ISO 8601 date ranges" do
-		date = Timetwister.parse("1776-07-04/1789-03-01")
-		expect(date[0][:date_start]).to eq("1776-07-04")
-		expect(date[0][:date_end]).to eq("1789-03-01")
-		expect(date[0][:inclusive_range]).to eq(true)
-		expect(date[0][:test_data]).to eq("40")
+		forms = ["1776-07-04/1789-03-01", "1789-03-01/1776-07-04"]
+		forms.each do |f|
+			date = Timetwister.parse(f)
+			expect(date[0][:date_start]).to eq("1776-07-04")
+			expect(date[0][:date_end]).to eq("1789-03-01")
+			expect(date[0][:inclusive_range]).to eq(true)
+			expect(date[0][:test_data]).to eq("40")
+		end
 	end
 
 	it "parses definite and approximate single years" do
@@ -44,7 +47,7 @@ describe Timetwister do
 
 	it "parses ranges of full dates" do
 
-		forms = ["July 4 1776 - March 1 1789", "4 July 1776 - 1 March 1789", "1776 July 4 - 1789 March 1", "1776 4 July - 1789 1 March"]
+		forms = ["July 4 1776 - March 1 1789", "4 July 1776 - 1 March 1789", "1776 July 4 - 1789 March 1", "1776 4 July - 1789 1 March", "1776 4 July to 1789 1 March"]
 		forms.each do |f|
 			date = Timetwister.parse(f)
 			expect(date[0][:date_start]).to eq("1776-07-04")
@@ -261,7 +264,7 @@ describe Timetwister do
 	end
 
 	it "parses day/month ranges within a single year" do
-		forms = ["4 May - 10 July 1776", "1776 May 4 - July 10", "May 4 - July 10 1776", "4 May - 10 July 1776"]
+		forms = ["4 May - 10 July 1776", "1776 May 4 - July 10", "May 4 - July 10 1776", "4 May - 10 July 1776", "4 May to 10 July 1776"]
 		forms.each do |f|
 			date = Timetwister.parse(f)
 			expect(date[0][:date_start]).to eq("1776-05-04")
@@ -275,7 +278,7 @@ describe Timetwister do
 	end
 
 	it "parses full date + year/month date range" do
-		forms = ["4 July 1776 - March 1789", "1776 July 4 - 1789 March"]
+		forms = ["4 July 1776 - March 1789", "1776 July 4 - 1789 March", "1776 July 4 to 1789 March"]
 		forms.each do |f|
 			date = Timetwister.parse(f)
 			expect(date[0][:date_start]).to eq("1776-07-04")
@@ -303,7 +306,7 @@ describe Timetwister do
 	# the normalized dates returned here are a bit funny
 	# we could do with standardizing them
 	it "parses year + month/year range" do
-		forms = ["1776 - March 1789", "1776 - 1789 March"]
+		forms = ["1776 - March 1789", "1776 - 1789 March", "1776 to 1789 March"]
 		forms.each do |f|
 			date = Timetwister.parse(f)
 			expect(date[0][:date_start]).to eq("1776-01")

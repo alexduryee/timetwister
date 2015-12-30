@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'chronic'
+require 'timetwister/utilities'
 
 class Parser
 
@@ -11,7 +12,7 @@ class Parser
 		@dates = { :original_string => str, :index_dates => [], :date_start => nil, :date_end => nil,
 			:date_start_full => nil, :date_end_full => nil, :inclusive_range => nil, :certainty => nil }
 
-		@regex_tokens = regex_tokens
+		@regex_tokens = Utilities.regex_tokens
 
 		# defensive checks against very malformed date strings
 		if str.include?('??')
@@ -19,12 +20,12 @@ class Parser
 		end
 
 		# perform this here, before the string gets purged of certainty indicators
-		@dates[:certainty] = return_certainty(@string)
+		@dates[:certainty] = Utilities.return_certainty(@string)
 
 		# normalize the string into the parser's preferred form
-		@string = clean_string(@string)
-		@string = language_to_english(@string)
-		@string = replace_ordinals(@string)
+		@string = Utilities.clean_string(@string)
+		@string = Utilities.language_to_english(@string)
+		@string = Utilities.replace_ordinals(@string)
 
 		# parse!
 		self.match_replace
@@ -39,7 +40,7 @@ class Parser
 			@dates[:date_end] = @dates[:date_start]
 		end
 
-		stringify_values
+		@dates = Utilities.stringify_values(@dates)
 		add_full_dates
 
 		return @dates
@@ -372,6 +373,7 @@ class Parser
 	end
 
 
+	# 1999
 	def self.proc_year_range
 		proc = Proc.new do |string|
 			# Only supports years from 1000
@@ -389,9 +391,7 @@ class Parser
 		end
 	end
 
-
-
-
+	# 1999 - 2010s
 	def self.proc_range_year_to_decade
 		proc = Proc.new do |string|
 				range = year_range(string)
@@ -409,6 +409,7 @@ class Parser
 	end
 
 
+	# 1990-91
 	def self.proc_year_range_short
 		proc = Proc.new do |string|
 			range = string.split('-')
@@ -426,6 +427,7 @@ class Parser
 		end
 	end
 
+	# this may be obsolete - however, keep it just in case
 	def self.proc_year_range_list_combo
 		proc = Proc.new do |string|
 			ranges = []
@@ -460,7 +462,7 @@ class Parser
 		end
 	end
 
-
+	# 1990s
 	def self.proc_decade_s
 		proc = Proc.new do |string|
 			decade = string.match(/[0-9]{3}0/).to_s
@@ -472,7 +474,7 @@ class Parser
 		end
 	end
 
-
+	# 19--
 	def self.proc_century_with_placeholders
 		proc = Proc.new do |string|
 			century = string.match(/[0-9]{2}/).to_s
@@ -485,7 +487,7 @@ class Parser
 		end
 	end
 
-
+	# early 1990s
 	def self.proc_decade_s_qualified
 		proc = Proc.new do |string|
 			decade = string.match(/[0-9]{3}0/).to_s
@@ -506,7 +508,7 @@ class Parser
 		end
 	end
 
-
+	# 1990s-2000s
 	def self.proc_decade_s_range
 		proc = Proc.new do |string|
 			decades = string.scan(/[0-9]{3}0/)
@@ -520,18 +522,21 @@ class Parser
 		end
 	end
 
-
+	# 1999-09-09
+	# September 9, 1999
+	# 1999 September 9
 	def self.proc_full_date_single
 		proc = Proc.new do |string|
 			datetime = full_date_single_to_datetime(string)
 			if datetime
-				full_date_single_keydates(string,datetime,'%Y-%m-%d')
+				@dates[:date_start] = datetime.strftime('%Y-%m-%d')
 				@dates[:index_dates] << datetime.strftime('%Y').to_i
 			end
 		end
 	end
 
-
+	# September 1999
+	# 1999 September
 	def self.proc_month_year_single
 		proc = Proc.new do |string|
 			string.gsub!(/\?/,'')
@@ -549,15 +554,11 @@ class Parser
 
 			datetime = Chronic.parse(string)
 			if datetime
-				full_date_single_keydates(string,datetime, '%Y-%m')
+				@dates[:date_start] = datetime.strftime('%Y-%m')
 				@dates[:index_dates] << datetime.strftime('%Y').to_i
 			end
 		end
 	end
-
-
-
-
 
 	# "1976 July 4 - 1981 October 1", etc.
 	# call with second argument 'month' if no day value is present
@@ -584,7 +585,7 @@ class Parser
 					month_date_end = datetime_end.strftime('%Y-%m')
 					month_date_end_parts = month_date_end.split('-')
 
-					month_date_end_last = days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
+					month_date_end_last = Utilities.days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
 					month_date_full = month_date_end + "-#{month_date_end_last}"
 
 					datetime_end = Chronic.parse(month_date_full)
@@ -604,7 +605,7 @@ class Parser
 	# 1980 1-20 Feb.
 	def self.proc_single_month_date_range
 		proc = Proc.new do |string|
-			year = extract_year(string)
+			year = Utilities.extract_year(string)
 			day_range = string.match(/\d{1,2}\-\d{1,2}/).to_s
 			string.gsub!(Regexp.new(day_range),'')
 			month = string.strip
@@ -638,7 +639,7 @@ class Parser
 				year_start = datetime_start.strftime('%Y').to_i
 				year_end = datetime_end.strftime('%Y').to_i
 
-				if datetime_comparitor(datetime_end) < datetime_comparitor(datetime_start)
+				if Utilities.datetime_comparitor(datetime_end) < Utilities.datetime_comparitor(datetime_start)
 					# this range is reversed in error
 					years = [year_end,year_start]
 					year_start, year_end = years[0], years[1]
@@ -647,8 +648,8 @@ class Parser
 				end
 
 				@dates[:index_dates] += (year_start..year_end).to_a
-				@dates[:date_start] = datetime_start.strftime(is8601_string_format dates[0])
-				@dates[:date_end] = datetime_end.strftime(is8601_string_format dates[1])
+				@dates[:date_start] = datetime_start.strftime(iso8601_string_format dates[0])
+				@dates[:date_end] = datetime_end.strftime(iso8601_string_format dates[1])
 				@dates[:inclusive_range] = true
 
 			end
@@ -665,8 +666,8 @@ class Parser
 			first_month = string.match(@regex_tokens[:named_month]).to_s
 			last_month = string.match(@regex_tokens[:named_month] + '$').to_s
 
-	# chronic is fiddly about short months with periods
-	# (e.g. "may.") so we remove them
+			# chronic is fiddly about short months with periods
+			# (e.g. "may.") so we remove them
 			date_string_first = first_month.delete('.') + ' 1,' + year
 			datetime_first = Chronic.parse(date_string_first)
 			if !last_month.empty?
@@ -703,7 +704,7 @@ class Parser
 				else
 					datetime_start = full_date_single_to_datetime(dates[0] + "-01-01")
 					datetime_end_tmp = full_date_single_to_datetime(dates[1] + "-28")
-					datetime_end = full_date_single_to_datetime(dates[1] + "-" + days_in_month(datetime_end_tmp.month, datetime_end_tmp.year).to_s)
+					datetime_end = full_date_single_to_datetime(dates[1] + "-" + Utilities.days_in_month(datetime_end_tmp.month, datetime_end_tmp.year).to_s)
 				end
 
 				if datetime_start && datetime_end
@@ -781,7 +782,7 @@ class Parser
 					month_date_end = datetime_end.strftime('%Y-%m')
 					month_date_end_parts = month_date_end.split('-')
 
-					month_date_end_last = days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
+					month_date_end_last = Utilities.days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
 					month_date_full = month_date_end + "-#{month_date_end_last}"
 
 					datetime_end = Chronic.parse(month_date_full)
@@ -820,46 +821,9 @@ class Parser
 		end
 	end
 
-	def self.regex_tokens
-		return {
-			# 1969, [1969], c1969
-			:year => '[\[\sc\(]{0,3}[0-2][0-9]{3}[\]\s\.\,;\?\)]{0,3}',
-			# - or 'to'
-			:range_delimiter => '\s*((\-)|(to))\s*',
-			# , or ;
-			:list_delimiter => '\s*[\,\;]\s*',
-			# , or ;
-			:range_or_list_delimiter => '\s*([\,\;]|((\-)|(to)))\s*',
-			# n.d., undated, etc.
-			:nd => '[\[\s]{0,2}\b([Uu]+ndated\.?)|([nN]o?\.?\s*[dD](ate)?\.?)\b[\s\]\.]{0,3}',
-			# 1960s, 1960's
-			:decade_s => '[\[\s]{0,2}[0-9]{3}0\'?s[\]\s]{0,2}',
 
-			# 1970-75
-			:year_range_short => '\s*[0-9]{4}\s?\-\s*(([2-9][0-9])|(1[3-9]))\s*',
-
-			# 196-
-			:decade_aacr => '[0-9]{3}\-',
-			# named months, including abbreviations (case insensitive)
-			:named_month => '\s*(?i)\b((jan(uary)?)|(feb(ruary)?)|(mar(ch)?)|(apr(il)?)|(may)|(jun(e)?)|(jul(y)?)|(aug(ust)?)|(sep(t|tember)?)|(oct(ober)?)|(nov(ember)?)|(dec(ember)?))\b\.?\s*',
-			# circa, ca. - also matches 'c.', which is actually 'copyright', but is still not something we need to deal with
-			:circa => '\s*[Cc](irc)?a?\.?\s*',
-			# early, late, mid-
-			:decade_qualifier => '([Ee]arly)|([Mm]id)|([Ll]ate)\-?',
-			# 06-16-1972, 6-16-1972
-			:numeric_date_us => '(0?1)|(0?2)|(0?3)|(0?4)|(0?5)|(0?6)|(0?7)|(0?8)|(0?9)|1[0-2][\-\/](([0-2]?[0-9])|3[01])[\-\/])?[12][0-9]{3}',
-			# 1972-06-16
-			:iso8601 => '[0-9]{4}\-[0-9]{2}\-[0-9]{2}',
-			:iso8601_full => '[0-9]{4}((\-[0-9]{2})(\-[0-9]{2})?)?',
-			:iso8601_month => '[0-9]{4}\-[0-9]{2}',
-			:anchor_start => '^[^\w\d]*',
-			:anchor_end => '[^\w\d]*$',
-			:optional_comma => '[\s\,]*',
-			:day_of_month => '\s*(([0-2]?[0-9])|(3[0-1]))\s*'
-		}
-	end
-
-
+	# Transform full date strings into parsed datetime objects
+	# e.g. "September 9, 1999" -> datetime
 	def self.full_date_single_to_datetime(string)
 		new_string = string.clone
 		if new_string.match(/\d{4}\-\d{2}\-\d{2}/)
@@ -895,7 +859,7 @@ class Parser
 		year_start = datetime_start.strftime('%Y').to_i
 		year_end = datetime_end.strftime('%Y').to_i
 
-		if datetime_comparitor(datetime_end) > datetime_comparitor(datetime_start)
+		if Utilities.datetime_comparitor(datetime_end) > Utilities.datetime_comparitor(datetime_start)
 
 			@dates[:index_dates] += (year_start..year_end).to_a
 
@@ -907,12 +871,7 @@ class Parser
 		end
 	end
 
-
-	def self.full_date_single_keydates(string,datetime,format)
-		@dates[:date_start] = datetime.strftime(format)
-	end
-
-
+	# generates date_start and date_end from index_dates list
 	def self.process_year_range
 		@dates[:index_dates].sort!
 		@dates[:index_dates].uniq!
@@ -921,7 +880,8 @@ class Parser
 	end
 
 
-	def self.is8601_string_format(iso_8601_date)
+	# detects format of ISO8601 date to pass to strftime
+	def self.iso8601_string_format(iso_8601_date)
 		if iso_8601_date.match(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/)
 			return '%Y-%m-%d'
 		elsif iso_8601_date.match(/^[0-9]{4}\-[0-9]{2}$/)
@@ -931,7 +891,7 @@ class Parser
 		end
 	end
 
-
+	# generates datetime from ISO8601-formatted date
 	def self.iso8601_datetime(iso_8601_date)
 		if iso_8601_date.match(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/)
 			Chronic.parse(iso_8601_date)
@@ -942,112 +902,13 @@ class Parser
 		end
 	end
 
-
-	# Removes the first 4-digit number found in the string and returns it
-	def self.extract_year(string)
-		year = string.match(/\d{4}/).to_s
-		string.gsub!(Regexp.new(year),'')
-		year
-	end
-
-
-	# removes sub-strings that do not contain parsable data
-	def self.clean_string(string)
-		r = @regex_tokens
-		# remove n.y. and variants from beginning of string
-		substrings = [
-			/\[n\.?y\.?\]/,
-			/[\[\]\(\)]/,
-			/[\.\,\)\;\:]*$/,
-			/\?/,
-			/approx\.?(imately)?/i,
-			/\s#{regex_tokens[:circa]}\s/,
-			/^#{regex_tokens[:circa]}\s/,
-			Regexp.new("([\,\;\s(and)]{0,4}#{regex_tokens[:nd]})?$")
-		]
-
-		# transform seasons to months
-		string.gsub!(/[Ww]inter/, " January 1 - March 20 ")
-		string.gsub!(/[Ss]pring/, " March 20 - June 21 ")
-		string.gsub!(/[Ss]ummer/, " June 21 - September 23 ")
-		string.gsub!(/[Aa]utumn/, " September 23 - December 22 ")
-		string.gsub!(/[Ff]all/, " September 23 - December 22 ")
-
-		# remove days of the week
-		dow = [/[Ss]unday,?\s+/, /[Mm]onday,?\s+/, /[Tt]uesday,?\s+/, /[Ww]ednesday,?\s+/, /[Tt]hursday,?\s+/, /[Ff]riday,?\s+/, /[Ss]aturday,?\s+/]
-		dow.each {|d| string.gsub!(d, '')}
-
-		# remove times of day
-		tod = [/[Mm]orning,?\s+/, /[Aa]fternoon,?\s+/, /[Ee]vening,?\s+/, /[Nn]ight,?\s+/]
-		tod.each {|t| string.gsub!(t, '')}
-
-		# remove single question marks
-		string.gsub!(/([0-9])\?([^\?])/,'\1\2')
-
-		substrings.each { |s| string.gsub!(s,'') }
-		string.strip!
-		string
-	end
-
 	def self.year_range(string)
 		range = string.scan(Regexp.new(@regex_tokens[:year]))
 		range.each { |d| d.gsub!(/[^0-9]*/,'') }
 		range.map { |y| y.to_i }
 	end
 
-
-	def self.datetime_comparitor(datetime)
-		d = datetime.to_s
-		d.gsub!(/[^\d]/,'')
-		return d.to_i
-	end
-
-
-	def self.leap_year?(year)
-		year = (year.kind_of? String) ? year.to_i : year
-		if year % 400 == 0
-			return true
-		elsif year % 100 == 0
-			return false
-		elsif year % 4 == 0
-			return true
-		else
-			return false
-		end
-	end
-
-
-	# month and year must be numeric
-	def self.days_in_month(month,year)
-		month = month.kind_of?(String) ? month.to_i : month
-		year = year.kind_of?(String) ? year.to_i : year
-		days = {
-			1 => 31,
-			2 => leap_year?(year) ? 29 : 28,
-			3 => 31,
-			4 => 30,
-			5 => 31,
-			6 => 30,
-			7 => 31,
-			8 => 31,
-			9 => 30,
-			10 => 31,
-			11 => 30,
-			12 => 31
-		}
-		days[month]
-	end
-
-
-	def self.stringify_values
-		@dates.each do |k,v|
-			if v.is_a?(Fixnum)
-				@dates[k] = v.to_s
-			end
-		end
-	end
-
-
+	# enrich the final output hash with more comprehensive date metadata
 	def self.add_full_dates
 		if @dates[:date_start] && !@dates[:date_start_full]
 			if @dates[:date_start].match(/\d{4}\-\d{2}\-\d{2}/)
@@ -1065,128 +926,12 @@ class Parser
 				year = @dates[:date_end].match(/^\d{4}/).to_s
 				if @dates[:date_end].match(/\d{4}\-\d{2}/)
 					month = @dates[:date_end].match(/\d{2}$/).to_s
-					day = days_in_month(month,year).to_s
+					day = Utilities.days_in_month(month,year).to_s
 					@dates[:date_end_full] = @dates[:date_end] + "-#{day}"
 				elsif @dates[:date_end].match(/\d{4}/)
 					@dates[:date_end_full] = @dates[:date_end] + "-12-31"
 				end
 			end
 		end
-	end
-
-	def self.return_certainty(str)
-
-		# order of precedence, from least to most certain:
-	    # 1) questionable dates
-	    # 2) approximate dates
-	    # 3) inferred dates
-
-	    if str.include?('?')
-	      return 'questionable'
-	    end
-
-	    if str.downcase.include?('ca') || \
-	      str.downcase.include?('approx')
-	      return 'approximate'
-	    end
-
-	    if str.include?('[') || str.include?(']')
-	      return 'inferred'
-	    end
-
-	    return nil
-	end
-
-	def self.replace_ordinals(str)
-
-		work_str = str.clone
-
-		ordinals = {
-			# replace fulltext ordinals with numbers
-			'first' => '1',
-			'second' => '2',
-			'third' => '3',
-			'fourth' => '4',
-			'fifth' => '5',
-			'sixth' => '6',
-			'seventh' => '7',
-			'eighth' => '8',
-			'ninth' => '9',
-			'tenth' => '10',
-			'eleventh' => '11',
-			'twelfth' => '12',
-			'thirteenth' => '13',
-			'fourteenth' => '14',
-			'fifteenth' => '15',
-			'sixteenth' => '16',
-			'seventeenth' => '17',
-			'eighteenth' => '18',
-			'nineteenth' => '19',
-			'twentieth' => '20',
-			'twenty-' => '2',
-			'thirtieth' => '30',
-			'thirty-' => '3',
-
-			# replace numeric ordinals with plain numbers
-			'1st' => '1',
-			'2nd' => '2',
-			'3rd' => '3',
-			'3d' => '3',
-			'4th' => '4',
-			'5th' => '5',
-			'6th' => '6',
-			'7th' => '7',
-			'8th' => '8',
-			'9th' => '9',
-			'0th' => '0'
-		}
-
-		ordinals.each do |key, value|
-			work_str.gsub!(Regexp.new(key), value)
-		end
-
-		return work_str
-	end
-
-	def self.language_to_english(str)
-
-		work_str = str.clone
-
-		languages = {
-
-			# french
-			'janvier' => 'January',
-			'février' => 'February',
-			'mars' => 'March',
-			'avril' => 'April',
-			'mai' => 'May',
-			'juin' => 'June',
-			'juillet' => 'July',
-			'août' => 'August',
-			'septembre' => 'September',
-			'octobre' => 'October',
-			'novembre' => 'November',
-			'décembre' => 'December',
-
-			# spanish
-			'enero' => 'January',
-			'febrero' => 'February',
-			'marzo' => 'March',
-			'abril' => 'April',
-			'mayo' => 'May',
-			'junio' => 'June',
-			'julio' => 'July',
-			'agosto' => 'August',
-			'septiembre' => 'September',
-			'octubre' => 'October',
-			'noviembre' => 'November',
-			'diciembre' => 'December'
-		}
-
-		languages.each do |key, value|
-			work_str.gsub!(/#{key}/i, value)
-		end
-
-		return work_str
 	end
 end
