@@ -131,6 +131,34 @@ class Utilities
 			'octubre' => 'October',
 			'noviembre' => 'November',
 			'diciembre' => 'December'
+
+			# italian
+			'gennaio' => 'January',
+			'febbraio' => 'February',
+			'marzo' => 'March',
+			'aprile' => 'April',
+			'maggio' => 'May',
+			'giugno' => 'June',
+			'luglio' => 'July',
+			'agosto' => 'August',
+			'settembre' => 'September',
+			'ottobre' => 'October',
+			'novembre' => 'November',
+			'dicembre' => 'December'
+
+			# german
+			'Januar' => 'January',
+			'Februar' => 'February',
+			'März' => 'March',
+			'April' => 'April',
+			'Mai' => 'May',
+			'Juni' => 'June',
+			'Juli' => 'July',
+			'August' => 'August',
+			'September' => 'September',
+			'Oktober' => 'October',
+			'November' => 'November',
+			'Dezember' => 'December'
 		}
 
 		languages.each do |key, value|
