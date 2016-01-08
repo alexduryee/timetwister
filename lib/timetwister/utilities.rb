@@ -130,7 +130,7 @@ class Utilities
 			'septiembre' => 'September',
 			'octubre' => 'October',
 			'noviembre' => 'November',
-			'diciembre' => 'December'
+			'diciembre' => 'December',
 
 			# italian
 			'gennaio' => 'January',
@@ -144,7 +144,7 @@ class Utilities
 			'settembre' => 'September',
 			'ottobre' => 'October',
 			'novembre' => 'November',
-			'dicembre' => 'December'
+			'dicembre' => 'December',
 
 			# german
 			'Januar' => 'January',
