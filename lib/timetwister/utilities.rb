@@ -17,15 +17,15 @@ class Utilities
 
 	def self.edtf_to_normal(str)
 		# replace 'u' dates with ranges
-		if str =~ /[0-9]u/
+		if str =~ /[0-9][ux]/
 			edtf_start = str.clone
 			edtf_end = str.clone
 
-			while edtf_start =~ /[0-9]u/
-				edtf_start = edtf_start.gsub(/([0-9])u/, '\10')
+			while edtf_start =~ /[0-9][ux]/
+				edtf_start = edtf_start.gsub(/([0-9])[ux]/, '\10')
 			end
-			while edtf_end =~ /[0-9]u/
-				edtf_end = edtf_end.gsub(/([0-9])u/, '\19')
+			while edtf_end =~ /[0-9][ux]/
+				edtf_end = edtf_end.gsub(/([0-9])[ux]/, '\19')
 			end
 
 			outstr = edtf_start + ' - ' + edtf_end
@@ -58,7 +58,7 @@ class Utilities
 	      return 'inferred'
 	    end
 
-	    if str =~ /[0-9]u/
+	    if str =~ /[0-9][ux]/
 	    	return 'approximate'
 	    end
 

@@ -723,6 +723,15 @@ describe Timetwister do
 		expect(date[0][:test_data]).to eq("120")
 		expect(date[0][:certainty]).to eq("approximate")
 
+		date = Timetwister.parse("19xx")
+		expect(date[0][:date_start]).to eq("1900")
+		expect(date[0][:date_start_full]).to eq("1900-01-01")
+		expect(date[0][:date_end]).to eq("1999")
+		expect(date[0][:date_end_full]).to eq("1999-12-31")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:test_data]).to eq("120")
+		expect(date[0][:certainty]).to eq("approximate")
+
 		date = Timetwister.parse("19u5")
 		expect(date[0][:date_start]).to eq("1905")
 		expect(date[0][:date_start_full]).to eq("1905-01-01")
