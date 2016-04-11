@@ -291,7 +291,7 @@ class Utilities
 			# circa, ca. - also matches 'c.', which is actually 'copyright', but is still not something we need to deal with
 			:circa => '\s*[Cc](irc)?a?\.?\s*',
 			# early, late, mid-
-			:decade_qualifier => '([Ee]arly)|([Mm]id)|([Ll]ate)\-?',
+			:decade_qualifier => '(([Ee]arly)|([Mm]id)|([Ll]ate))\-?',
 			# 06-16-1972, 6-16-1972
 			:numeric_date_us => '(0?1)|(0?2)|(0?3)|(0?4)|(0?5)|(0?6)|(0?7)|(0?8)|(0?9)|1[0-2][\-\/](([0-2]?[0-9])|3[01])[\-\/])?[12][0-9]{3}',
 			# 1972-06-16

@@ -296,8 +296,6 @@ class Parser
 		}
 
 
-
-
 		# 19--, 18--, 18--?, etc.
 		match_replace << {
 			:match => "(#{r[:circa]})?[1-2][0-9]\-{2}",
@@ -350,6 +348,13 @@ class Parser
 			:match => "(#{r[:circa]})?[0-1]?[0-9]/[0-3]?[0-9]/#{r[:year]}",
 			:proc => proc_date_with_slashes,
 			:id => 350
+		}
+
+		# 19th century
+		match_replace << {
+			:match => "(#{r[:decade_qualifier]})?\s?[0-2]?[0-9]\s[Cc][Ee][Nn][Tt][Uu][Rr][Yy]",
+			:proc => proc_century_with_qualifiers,
+			:id => 360
 		}
 
 		match_replace
@@ -481,6 +486,34 @@ class Parser
 			century += '00'
 			century_start = century.to_i
 			century_end = (century_start + 99)
+			@dates[:index_dates] = (century_start..century_end).to_a
+			@dates[:inclusive_range] = true
+			process_year_range()
+		end
+	end
+
+	# mid 19th century
+	def self.proc_century_with_qualifiers
+		proc = Proc.new do |string|
+			century = string.match(/[0-9]{2}/).to_s
+
+			if string.match(/[Ee]arly/)
+				range_start = '00'
+				range_end = '40'
+			elsif string.match(/[Mm]id(dle)?/)
+				range_start = '30'
+				range_end = '80'
+			elsif string.match(/[Ll]ate/)
+				range_start = '70'
+				range_end = '00'
+			else
+				range_start = '00'
+				range_end = '99'
+			end
+
+			century_start = (century + range_start).to_i - 100
+			century_end = (century + range_end).to_i - 100
+
 			@dates[:index_dates] = (century_start..century_end).to_a
 			@dates[:inclusive_range] = true
 			process_year_range()
@@ -792,7 +825,7 @@ class Parser
 						month_date_start = datetime_start.strftime('%Y-%m')
 						month_date_end = datetime_end.strftime('%Y-%m-%d')
 					end
-		end
+				end
 
 				if datetime_start && datetime_end
 					process_date_range(datetime_start,datetime_end)
@@ -820,7 +853,6 @@ class Parser
 			proc_full_date_single.call(dates[2].to_s + "-" + dates[0].to_s + "-" + dates[1].to_s)
 		end
 	end
-
 
 	# Transform full date strings into parsed datetime objects
 	# e.g. "September 9, 1999" -> datetime

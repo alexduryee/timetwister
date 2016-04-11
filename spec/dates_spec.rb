@@ -647,7 +647,21 @@ describe Timetwister do
 			expect(date[1][:index_dates]).to eq([1776])
 			expect(date[1][:test_data]).to eq("220")
 		end
-
 	end
 
+	it "parses dates with qualifiers, certainty, and very vague dates" do
+		date = Timetwister.parse("ca. mid 19th century")
+		expect(date[0][:date_start]).to eq("1830")
+		expect(date[0][:date_start_full]).to eq("1830-01-01")
+		expect(date[0][:date_end]).to eq("1880")
+		expect(date[0][:date_end_full]).to eq("1880-12-31")
+	end
+
+	it "parses centuries" do
+		date = Timetwister.parse("17th century")
+		expect(date[0][:date_start]).to eq('1600')
+		expect(date[0][:date_start_full]).to eq("1600-01-01")
+		expect(date[0][:date_end]).to eq("1699")
+		expect(date[0][:date_end_full]).to eq("1699-12-31")
+	end
 end

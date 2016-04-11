@@ -4,29 +4,28 @@ require "timetwister/utilities"
 
 module Timetwister
 
-  	def self.parse(str, options={})
+  def self.parse(str, options={})
 
-  		out = []
-      str = rearrange_conjunctions(str)
+    out = []
+    str = rearrange_conjunctions(str)
 
-  		str.split(';').each do |semi|
-   			semi.split(/\sand\s|\s\&\s/i).each do |conj|
+    str.split(';').each do |semi|
+      semi.split(/\sand\s|\s\&\s/i).each do |conj|
 
-   				# check for dates of form "Month Day(-Day), Year" before splitting on commas
-   				# (removes certainty markers as to not jam the regex)
-   				if Utilities.replace_ordinals(conj).gsub(/[\?\[\]]/, '').match(/[a-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/i)
-   					out << Parser.string_to_dates(conj, options)
-   				else
-   					conj.split(',').each do |comma|
-   						out << Parser.string_to_dates(comma, options)
-   					end
-   				end
-   			end
+        # check for dates of form "Month Day(-Day), Year" before splitting on commas
+        # (removes certainty markers as to not jam the regex)
+        if Utilities.replace_ordinals(conj).gsub(/[\?\[\]]/, '').match(/[a-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/i)
+          out << Parser.string_to_dates(conj, options)
+        else
+          conj.split(',').each do |comma|
+            out << Parser.string_to_dates(comma, options)
+          end
+        end
       end
+    end
 
-		return out
-
-	end
+    return out
+  end
 
   # sometimes years are considered implicit in complex dates
   # e.g. "1900 January & February"
