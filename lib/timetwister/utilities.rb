@@ -15,6 +15,25 @@ class Utilities
 		return hash
 	end
 
+	def self.edtf_to_normal(str)
+		# replace 'u' dates with ranges
+		if str =~ /[0-9]u/
+			edtf_start = str.clone
+			edtf_end = str.clone
+
+			while edtf_start =~ /[0-9]u/
+				edtf_start = edtf_start.gsub(/([0-9])u/, '\10')
+			end
+			while edtf_end =~ /[0-9]u/
+				edtf_end = edtf_end.gsub(/([0-9])u/, '\19')
+			end
+
+			outstr = edtf_start + ' - ' + edtf_end
+		end
+
+		return (outstr ? outstr : str)
+	end
+
 	# return MODS certainty from a date string
 	# input: freetext date string
 	# output: string representing the date certainty
@@ -24,6 +43,7 @@ class Utilities
 	    # 1) questionable dates
 	    # 2) approximate dates
 	    # 3) inferred dates
+		# 4) edtf dates
 
 	    if str.include?('?')
 	      return 'questionable'
@@ -36,6 +56,10 @@ class Utilities
 
 	    if str.include?('[') || str.include?(']')
 	      return 'inferred'
+	    end
+
+	    if str =~ /[0-9]u/
+	    	return 'approximate'
 	    end
 
 	    return nil
