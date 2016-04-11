@@ -357,6 +357,13 @@ class Parser
 			:id => 360
 		}
 
+		# 19uu, 199u
+		match_replace << {
+			:match => "(#{r[:circa]})?(#{r[:named_month]})?[0-9][0-9u][0-9u]u",
+			:proc => proc_edtf_uncertain,
+			:id => 370
+		}
+
 		match_replace
 	end
 
@@ -832,6 +839,25 @@ class Parser
 				end
 				@dates[:inclusive_range] = true
 			end
+		end
+	end
+
+	def self.proc_edtf_uncertain
+		proc = Proc.new do |string|
+			edtf_start = string.clone
+			while edtf_start =~ /[0-9]u/
+				edtf_start = edtf_start.gsub(/([0-9])u/, '\10')
+			end
+
+			edtf_end = string.clone
+			while edtf_end =~ /[0-9]u/
+				edtf_end = edtf_end.gsub(/([0-9])u/, '\19')
+			end
+
+			@dates[:index_dates] = (edtf_start.to_i..edtf_end.to_i).to_a
+			@dates[:inclusive_range] = true
+			@dates[:certainty] = "approximate"
+			process_year_range()
 		end
 	end
 

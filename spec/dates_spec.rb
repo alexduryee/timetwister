@@ -664,4 +664,23 @@ describe Timetwister do
 		expect(date[0][:date_end]).to eq("1699")
 		expect(date[0][:date_end_full]).to eq("1699-12-31")
 	end
+
+	it "parses edtf-formatted uncertain dates" do
+		date = Timetwister.parse("199u")
+		expect(date[0][:date_start]).to eq("1990")
+		expect(date[0][:date_start_full]).to eq("1990-01-01")
+		expect(date[0][:date_end]).to eq("1999")
+		expect(date[0][:date_end_full]).to eq("1999-12-31")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999])
+		expect(date[0][:test_data]).to eq("370")
+
+		date = Timetwister.parse("19uu")
+		expect(date[0][:date_start]).to eq("1900")
+		expect(date[0][:date_start_full]).to eq("1900-01-01")
+		expect(date[0][:date_end]).to eq("1999")
+		expect(date[0][:date_end_full]).to eq("1999-12-31")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:test_data]).to eq("370")
+	end
 end
