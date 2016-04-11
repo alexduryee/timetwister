@@ -260,11 +260,19 @@ class Utilities
 		]
 
 		# transform seasons to months
+		# winter is ambiguous, so we use the first instance and not the second
+		# (better odds of being right)
 		string.gsub!(/[Ww]inter/, " January 1 - March 20 ")
 		string.gsub!(/[Ss]pring/, " March 20 - June 21 ")
 		string.gsub!(/[Ss]ummer/, " June 21 - September 23 ")
 		string.gsub!(/[Aa]utumn/, " September 23 - December 22 ")
 		string.gsub!(/[Ff]all/, " September 23 - December 22 ")
+
+		# transform awful edtf season to months
+		string.gsub!(/([0-9]{4})-21/, '\1-03-20/\1-06-21')
+		string.gsub!(/([0-9]{4})-22/, '\1-06-21/\1-09-23')
+		string.gsub!(/([0-9]{4})-23/, '\1-09-23/\1-12-22')
+		string.gsub!(/([0-9]{4})-24/, '\1-01-01/\1-03-20')
 
 		# remove days of the week
 		dow = [/[Ss]unday,?\s+/, /[Mm]onday,?\s+/, /[Tt]uesday,?\s+/, /[Ww]ednesday,?\s+/, /[Tt]hursday,?\s+/, /[Ff]riday,?\s+/, /[Ss]aturday,?\s+/]

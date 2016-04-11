@@ -382,6 +382,44 @@ describe Timetwister do
 		expect(date[0][:test_data]).to eq("310")
 	end
 
+	it "parses edtf seasons" do
+		date = Timetwister.parse("1776-21")
+		expect(date[0][:date_start]).to eq("1776-03-20")
+		expect(date[0][:date_start_full]).to eq("1776-03-20")
+		expect(date[0][:date_end]).to eq("1776-06-21")
+		expect(date[0][:date_end_full]).to eq("1776-06-21")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("40")
+
+		date = Timetwister.parse("1776-22")
+		expect(date[0][:date_start]).to eq("1776-06-21")
+		expect(date[0][:date_start_full]).to eq("1776-06-21")
+		expect(date[0][:date_end]).to eq("1776-09-23")
+		expect(date[0][:date_end_full]).to eq("1776-09-23")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("40")
+
+		date = Timetwister.parse("1776-23")
+		expect(date[0][:date_start]).to eq("1776-09-23")
+		expect(date[0][:date_start_full]).to eq("1776-09-23")
+		expect(date[0][:date_end]).to eq("1776-12-22")
+		expect(date[0][:date_end_full]).to eq("1776-12-22")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("40")
+
+		date = Timetwister.parse("1776-24")
+		expect(date[0][:date_start]).to eq("1776-01-01")
+		expect(date[0][:date_start_full]).to eq("1776-01-01")
+		expect(date[0][:date_end]).to eq("1776-03-20")
+		expect(date[0][:date_end_full]).to eq("1776-03-20")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("40")
+	end
+
 	it "parses dates with punctuation" do
 		forms = ["July 4 1776?", "July 4 1776 [?]", "July 4? 1776", "?July 4 1776?", "[July] 4 1776?"]
 		forms.each do |f|
