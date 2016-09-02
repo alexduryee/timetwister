@@ -14,7 +14,8 @@ module Timetwister
 
         # check for dates of form "Month Day(-Day), Year" before splitting on commas
         # (removes certainty markers as to not jam the regex)
-        if Utilities.replace_ordinals(conj).gsub(/[\?\[\]]/, '').match(/[a-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/i)
+        if Utilities.replace_ordinals(conj).gsub(/[\?\[\]]/, '').match(/[a-z]*\.?\s[0-9]{1,2}(\s?-[0-9]{1,2})?\,\s[0-9]{4}/i) && \
+          !Utilities.replace_ordinals(conj).match(/[0-9]{4}\s[a-z]*\.?\s[0-9]{1,2}/i)
           out << Parser.string_to_dates(conj, options)
         else
           conj.split(',').each do |comma|

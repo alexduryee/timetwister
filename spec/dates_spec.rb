@@ -528,6 +528,24 @@ describe Timetwister do
 		expect(date[2][:test_data]).to eq("70")
 	end
 
+	it "parses lists of ISO 8601 dates" do
+		date = Timetwister.parse("1777 April 30, 1777 June 4")
+		expect(date[0][:date_start]).to eq("1777-04-30")
+		expect(date[0][:date_start_full]).to eq("1777-04-30")
+		expect(date[0][:date_end]).to eq("1777-04-30")
+		expect(date[0][:date_end_full]).to eq("1777-04-30")
+		expect(date[0][:index_dates]).to eq([1777])
+		expect(date[0][:test_data]).to eq("200")
+
+
+		expect(date[1][:date_start]).to eq("1777-06-04")
+		expect(date[1][:date_start_full]).to eq("1777-06-04")
+		expect(date[1][:date_end]).to eq("1777-06-04")
+		expect(date[1][:date_end_full]).to eq("1777-06-04")
+		expect(date[1][:index_dates]).to eq([1777])
+		expect(date[1][:test_data]).to eq("200")
+	end
+
 	it "parses lists of mixed date types" do
 		date = Timetwister.parse("July 1776 - August 1789, 1812 - 1820, 1900")
 		expect(date[0][:date_start]).to eq("1776-07")
