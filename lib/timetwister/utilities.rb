@@ -135,15 +135,15 @@ class Utilities
 			# italian
 			'gennaio' => 'January',
 			'febbraio' => 'February',
-			'marzo' => 'March',
+			# redundant date removed
 			'aprile' => 'April',
 			'maggio' => 'May',
 			'giugno' => 'June',
 			'luglio' => 'July',
-			'agosto' => 'August',
+			# redundant date removed
 			'settembre' => 'September',
 			'ottobre' => 'October',
-			'novembre' => 'November',
+			# redundant date removed
 			'dicembre' => 'December',
 
 			# german
@@ -151,7 +151,7 @@ class Utilities
 			'februar[^y]' => 'February',
 			'märz' => 'March',
 			'april' => 'April',
-			'mai' => 'May',
+			# redundant date removed
 			'juni' => 'June',
 			'juli' => 'July',
 			'august' => 'August',
