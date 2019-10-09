@@ -4,10 +4,10 @@ class Utilities
 
 	# walk through a hash and transforms all ints to strings
 	# input: a hash
-	# output: same hash, but with all Fixnums converted to strings
+	# output: same hash, but with all Integers converted to strings
 	def self.stringify_values(hash)
 		hash.each do |k,v|
-			if v.is_a?(Fixnum)
+			if v.is_a?(Integer)
 				hash[k] = v.to_s
 			end
 		end
