@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/alexduryee/timetwister.svg?branch=master)](https://travis-ci.org/alexduryee/timetwister)
+[![Build Status](https://travis-ci.com/alexduryee/timetwister.svg?branch=master)](https://travis-ci.org/alexduryee/timetwister)
 [![Coverage Status](https://coveralls.io/repos/alexduryee/timetwister/badge.svg?branch=master&service=github)](https://coveralls.io/github/alexduryee/timetwister?branch=master)
 
 # Timetwister
 
-A Chronic wrapper with improved date format parsing and fewer surprises.
+A DateTime wrapper with improved date format parsing and fewer surprises.
 
 Developed by the New York Public Library to transform freetext date metadata into machine-readable data.
 

@@ -195,7 +195,7 @@ describe Timetwister do
 	end
 
 	it "parses month ranges within one year" do
-		forms = ["July-September 1776", "1776 July-September"]
+		forms = ["July-September 1776", "1776 July-September", "1776 Jul.-Sept."]
 		forms.each do |f|
 			date = Timetwister.parse(f)
 			expect(date[0][:date_start]).to eq("1776-07")
