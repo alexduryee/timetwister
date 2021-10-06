@@ -3,7 +3,7 @@
 
 # Timetwister
 
-A Chronic wrapper with improved date format parsing and fewer surprises.
+A DateTime wrapper with improved date format parsing and fewer surprises.
 
 Developed by the New York Public Library to transform freetext date metadata into machine-readable data.
 

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'chronic'
+require 'date'
 require 'timetwister/utilities'
 
 class Parser
@@ -574,18 +574,7 @@ class Parser
 		proc = Proc.new do |string|
 			string.gsub!(/\?/,'')
 
-			# Chronic can't parse year-month strings properly
-			# so we need to change them to month-year before
-			# parsing them.
-
-			if string.match(/^[0-9]/)
-				tmpyear = string.split(' ')[0]
-				string.gsub!(/^.+? /,'')
-				string << " "
-				string << tmpyear
-			end
-
-			datetime = Chronic.parse(string)
+			datetime = DateTime.parse(string)
 			if datetime
 				@dates[:date_start] = datetime.strftime('%Y-%m')
 				@dates[:index_dates] << datetime.strftime('%Y').to_i
@@ -614,14 +603,14 @@ class Parser
 				# if month-specific, modify datetimes to include all days of each month
 				if specificity == 'month'
 					month_date_start = datetime_start.strftime('%Y-%m')
-					datetime_start = Chronic.parse(month_date_start + '-01')
+					datetime_start = DateTime.parse(month_date_start + '-01')
 					month_date_end = datetime_end.strftime('%Y-%m')
 					month_date_end_parts = month_date_end.split('-')
 
 					month_date_end_last = Utilities.days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
 					month_date_full = month_date_end + "-#{month_date_end_last}"
 
-					datetime_end = Chronic.parse(month_date_full)
+					datetime_end = DateTime.parse(month_date_full)
 				end
 
 				if datetime_start && datetime_end
@@ -699,14 +688,12 @@ class Parser
 			first_month = string.match(@regex_tokens[:named_month]).to_s
 			last_month = string.match(@regex_tokens[:named_month] + '$').to_s
 
-			# chronic is fiddly about short months with periods
-			# (e.g. "may.") so we remove them
-			date_string_first = first_month.delete('.') + ' 1,' + year
-			datetime_first = Chronic.parse(date_string_first)
+			date_string_first = first_month + ' 1,' + year
+			datetime_first = DateTime.parse(date_string_first)
 			if !last_month.empty?
 				@dates[:date_start] = datetime_first.strftime('%Y-%m')
 				date_string_last = last_month + ' ' + year
-				datetime_last = Chronic.parse(date_string_last)
+				datetime_last = DateTime.parse(date_string_last)
 				@dates[:date_end] = datetime_last.strftime('%Y-%m')
 			end
 			@dates[:inclusive_range] = true
@@ -729,7 +716,6 @@ class Parser
 			end
 
 			dates.each { |d| d.strip! }
-
 			if dates.length == 2
 				if dates[0].match(/[A-Za-z]/)
 					datetime_start = full_date_single_to_datetime(dates[0] + "-01")
@@ -773,20 +759,12 @@ class Parser
 						d << " "
 						d << year
 					end
-
-					# Chronic seemed to choke with YYYY-MM-DD dates
-					# so we'll flip it to MM-DD-YYYY
-					if d.match("^" + year)
-						d.gsub!(year + " ","")
-						d << " "
-						d << year
-					end
 				}
 
 				# change our strings to datetime objects
 				# and send them to be processed elsewhere
-				datetime_start = Chronic.parse(dates[0])
-				datetime_end = Chronic.parse(dates[1])
+				datetime_start = DateTime.parse(dates[0])
+				datetime_end = DateTime.parse(dates[1])
 				process_date_range(datetime_start, datetime_end)
 				@dates[:inclusive_range] = true
 			end
@@ -818,7 +796,7 @@ class Parser
 					month_date_end_last = Utilities.days_in_month(month_date_end_parts[1],month_date_end_parts[0]).to_s
 					month_date_full = month_date_end + "-#{month_date_end_last}"
 
-					datetime_end = Chronic.parse(month_date_full)
+					datetime_end = DateTime.parse(month_date_full)
 				else
 					datetime_start = full_date_single_to_datetime(dates[0] + "-01")
 					if datetime_start && datetime_end
@@ -870,13 +848,13 @@ class Parser
 				day = nil
 			end
 
-			new_string.gsub!(/[\.\,\s]+/,'')
+			new_string.gsub!(/[\.\,\s\-]+/,'')
 
 			month = new_string.clone
 			parse_string = month
 			parse_string += day ? " #{day}, #{year}" : " #{year}"
 		end
-		datetime = Chronic.parse(parse_string)
+		datetime = DateTime.parse(parse_string)
 	end
 
 
@@ -926,11 +904,11 @@ class Parser
 	# generates datetime from ISO8601-formatted date
 	def self.iso8601_datetime(iso_8601_date)
 		if iso_8601_date.match(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/)
-			Chronic.parse(iso_8601_date)
+			DateTime.parse(iso_8601_date)
 		elsif iso_8601_date.match(/^[0-9]{4}\-[0-9]{2}$/)
-			Chronic.parse(iso_8601_date + '-01')
+			DateTime.parse(iso_8601_date + '-01')
 		else
-			Chronic.parse(iso_8601_date + '-01-01')
+			DateTime.parse(iso_8601_date + '-01-01')
 		end
 	end
 

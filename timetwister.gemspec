@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Timetwister::VERSION
   spec.authors       = ["Alex Duryee"]
   spec.email         = ["alexanderduryee@nypl.org"]
-  spec.summary       = "Chronic wrapper to handle common date formats"
+  spec.summary       = "DateTime wrapper to handle common date formats"
   spec.homepage      = "http://github.com/alexduryee/timetwister"
   spec.license       = "MIT"
 
@@ -20,5 +20,4 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_runtime_dependency "chronic", "~> 0.10.2"
 end
