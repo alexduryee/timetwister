@@ -344,8 +344,17 @@ describe Timetwister do
 		end
 	end
 
-	it "parses seasons" do
+	it "parses single seasons" do
 		date = Timetwister.parse("Winter 1776")
+		expect(date[0][:date_start]).to eq("1776-01-01")
+		expect(date[0][:date_start_full]).to eq("1776-01-01")
+		expect(date[0][:date_end]).to eq("1776-03-20")
+		expect(date[0][:date_end_full]).to eq("1776-03-20")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("310")
+
+		date = Timetwister.parse("win. 1776")
 		expect(date[0][:date_start]).to eq("1776-01-01")
 		expect(date[0][:date_start_full]).to eq("1776-01-01")
 		expect(date[0][:date_end]).to eq("1776-03-20")
@@ -363,7 +372,25 @@ describe Timetwister do
 		expect(date[0][:index_dates]).to eq([1776])
 		expect(date[0][:test_data]).to eq("310")
 
+		date = Timetwister.parse("1776 Spr")
+		expect(date[0][:date_start]).to eq("1776-03-20")
+		expect(date[0][:date_start_full]).to eq("1776-03-20")
+		expect(date[0][:date_end]).to eq("1776-06-21")
+		expect(date[0][:date_end_full]).to eq("1776-06-21")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("310")
+
 		date = Timetwister.parse("1776 Summer")
+		expect(date[0][:date_start]).to eq("1776-06-21")
+		expect(date[0][:date_start_full]).to eq("1776-06-21")
+		expect(date[0][:date_end]).to eq("1776-09-23")
+		expect(date[0][:date_end_full]).to eq("1776-09-23")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("310")
+
+		date = Timetwister.parse("1776 Summ")
 		expect(date[0][:date_start]).to eq("1776-06-21")
 		expect(date[0][:date_start_full]).to eq("1776-06-21")
 		expect(date[0][:date_end]).to eq("1776-09-23")
@@ -375,11 +402,49 @@ describe Timetwister do
 		date = Timetwister.parse("Fall 1776")
 		expect(date[0][:date_start]).to eq("1776-09-23")
 		expect(date[0][:date_start_full]).to eq("1776-09-23")
-		expect(date[0][:date_end]).to eq("1776-12-22")
-		expect(date[0][:date_end_full]).to eq("1776-12-22")
+		expect(date[0][:date_end]).to eq("1776-12-31")
+		expect(date[0][:date_end_full]).to eq("1776-12-31")
 		expect(date[0][:inclusive_range]).to eq(true)
 		expect(date[0][:index_dates]).to eq([1776])
 		expect(date[0][:test_data]).to eq("310")
+
+		date = Timetwister.parse("Autumn 1776")
+		expect(date[0][:date_start]).to eq("1776-09-23")
+		expect(date[0][:date_start_full]).to eq("1776-09-23")
+		expect(date[0][:date_end]).to eq("1776-12-31")
+		expect(date[0][:date_end_full]).to eq("1776-12-31")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("310")
+
+		date = Timetwister.parse("Aut. 1776")
+		expect(date[0][:date_start]).to eq("1776-09-23")
+		expect(date[0][:date_start_full]).to eq("1776-09-23")
+		expect(date[0][:date_end]).to eq("1776-12-31")
+		expect(date[0][:date_end_full]).to eq("1776-12-31")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776])
+		expect(date[0][:test_data]).to eq("310")
+	end
+
+	it "parses ranges of seasons" do
+		date = Timetwister.parse("Winter 1776 - Spring 1777")
+		expect(date[0][:date_start]).to eq("1776-01-01")
+		expect(date[0][:date_start_full]).to eq("1776-01-01")
+		expect(date[0][:date_end]).to eq("1777-06-21")
+		expect(date[0][:date_end_full]).to eq("1777-06-21")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1776, 1777])
+		expect(date[0][:test_data]).to eq("80")
+
+		date = Timetwister.parse("1777 Spring - 1778 Summer")
+		expect(date[0][:date_start]).to eq("1777-03-20")
+		expect(date[0][:date_start_full]).to eq("1777-03-20")
+		expect(date[0][:date_end]).to eq("1778-09-23")
+		expect(date[0][:date_end_full]).to eq("1778-09-23")
+		expect(date[0][:inclusive_range]).to eq(true)
+		expect(date[0][:index_dates]).to eq([1777, 1778])
+		expect(date[0][:test_data]).to eq("80")
 	end
 
 	it "parses dates with punctuation" do

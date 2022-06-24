@@ -236,11 +236,7 @@ class Utilities
 		]
 
 		# transform seasons to months
-		string.gsub!(/[Ww]inter/, " January 1 - March 20 ")
-		string.gsub!(/[Ss]pring/, " March 20 - June 21 ")
-		string.gsub!(/[Ss]ummer/, " June 21 - September 23 ")
-		string.gsub!(/[Aa]utumn/, " September 23 - December 22 ")
-		string.gsub!(/[Ff]all/, " September 23 - December 22 ")
+		string = replace_seasons(string)
 
 		# remove days of the week
 		dow = [/[Ss]unday,?\s+/, /[Mm]onday,?\s+/, /[Tt]uesday,?\s+/, /[Ww]ednesday,?\s+/, /[Tt]hursday,?\s+/, /[Ff]riday,?\s+/, /[Ss]aturday,?\s+/]
@@ -255,6 +251,28 @@ class Utilities
 
 		substrings.each { |s| string.gsub!(s,'') }
 		string.strip!
+		return string
+	end
+
+	def self.replace_seasons(string)
+		seasons = {	'win[^\s]*'	=>	['January 1', 'March 20'],
+					'spr[^\s]*'	=>	['March 20', 'June 21'],
+					'sum[^\s]*'	=>	['June 21', 'September 23'],
+					'aut[^\s]*'	=>	['September 23', 'December 31'],
+					'fal[^\s]*'	=>	['September 23', 'December 31']}
+
+		# if we're working with a range, we need to be a little careful, so that we don't create sub-ranges in a string
+		is_range = string.match(/[^-]+?-[^-]+?/)
+
+		seasons.each do |season, dates|
+			regex = Regexp.new(season, Regexp::IGNORECASE)
+
+			# is the season the beginning or the end of a range?
+			new_date = (is_range ? (string.match(Regexp.new(season + '.+?-', Regexp::IGNORECASE)) ? dates[0] : dates[1]) : dates.join(' - '))
+			
+			string = string.gsub(regex, new_date)
+		end
+
 		return string
 	end
 
