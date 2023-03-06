@@ -46,7 +46,6 @@ describe Timetwister do
 	end
 
 	it "parses ranges of full dates" do
-
 		forms = ["July 4 1776 - March 1 1789", "4 July 1776 - 1 March 1789", "1776 July 4 - 1789 March 1", "1776 4 July - 1789 1 March", "1776 4 July to 1789 1 March"]
 		forms.each do |f|
 			date = Timetwister.parse(f)
@@ -570,6 +569,62 @@ describe Timetwister do
 			expect(date[0][:index_dates]).to eq([])
 			expect(date[0][:test_data]).to eq(nil)
 		end
+	end
+
+	it "DOES NOT parse nonexistent dates" do
+		date = Timetwister.parse('1776 September 31')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
+
+		date = Timetwister.parse('1776-11-31')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
+
+		date = Timetwister.parse('1776-11-00')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
+
+		date = Timetwister.parse('1776 whatever 31')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
+
+		date = Timetwister.parse('1776 sometime 72 - december 42 1999')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
+
+		date = Timetwister.parse('just absolute garbage')
+		expect(date[0][:date_start]).to eq(nil)
+		expect(date[0][:date_start_full]).to eq(nil)
+		expect(date[0][:date_end]).to eq(nil)
+		expect(date[0][:date_end_full]).to eq(nil)
+		expect(date[0][:inclusive_range]).to eq(nil)
+		expect(date[0][:index_dates]).to eq([])
+		expect(date[0][:test_data]).to eq(nil)
 	end
 
 	it "parses lists of years" do

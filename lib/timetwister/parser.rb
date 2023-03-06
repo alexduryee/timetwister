@@ -56,7 +56,14 @@ class Parser
 					if c[:proc]
 						# clone string to avoid changing it via in-place methods used in Procs
 						work_string = @string.clone
-						c[:proc].call(work_string, c[:arg])
+
+						# using a begin/rescue to catch dates that Date.parse errors on
+						begin
+							c[:proc].call(work_string, c[:arg])
+						rescue Date::Error
+							@dates = { :original_string => @string, :index_dates => [], :keydate => nil, :keydate_z => nil, :date_start => nil, :date_end => nil,
+									:date_start_full => nil, :date_end_full => nil, :inclusive_range => nil, :certainty => nil }
+						end
 					end
 					break
 				end
