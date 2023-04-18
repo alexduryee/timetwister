@@ -158,7 +158,36 @@ class Utilities
 			'september' => 'September',
 			'oktober' => 'October',
 			'november' => 'November',
-			'dezember' => 'December'
+			'dezember' => 'December',
+
+			# portuguese
+			'janeiro' => 'January',
+			'fevereiro' => 'February',
+			'março' => 'March',
+			'abril' => 'April',
+			'maio' => 'May',
+			'junho' => 'June',
+			'julho' => 'July',
+			'agosto' => 'August',
+			'setembro' => 'September',
+			'outubro' => 'October',
+			'novembro' => 'November',
+			'dezembro' => 'December',
+
+			# russian
+			'январь' => 'January',
+			'февраль' => 'February',
+			'март' => 'March',
+			'апрель' => 'April',
+			'май' => 'May',
+			'июнь' => 'June',
+			'июль' => 'July',
+			'август' => 'August',
+			'сентябрь' => 'September',
+			'октябрь' => 'October',
+			'ноябрь' => 'November',
+			'декабрь' => 'December'
+
 		}
 
 		languages.each do |key, value|
